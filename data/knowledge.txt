@@ -26,3 +26,9 @@ sample text chunk
 
 sample text chunk
 
+
+
+--- From PDF: dummy.pdf ---
+
+sample text chunk
+

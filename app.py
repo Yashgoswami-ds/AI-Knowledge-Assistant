@@ -11,6 +11,7 @@ from src.search import search
 from src.pdf_handler import handle_pdf_upload, list_uploaded_pdfs
 from src.translator import SUPPORTED_LANGUAGES, is_available as translator_available
 from src.link_extractor import extract_from_url
+from src.rag import ask as rag_ask
 
 
 load_dotenv()
@@ -273,6 +274,29 @@ def upload_pdf():
 def about():
     """About page."""
     return render_template("about.html")
+
+
+@app.route("/rag", methods=["GET", "POST"])
+def rag():
+    """Simple RAG QA UI and endpoint."""
+    question = ""
+    answer = None
+    error = None
+    sources = None
+
+    if request.method == "POST":
+        question = request.form.get("question", "").strip()
+        top_k = int(request.form.get("top_k", 3))
+
+        if question:
+            success, payload = rag_ask(question, top_k=top_k)
+            if success:
+                answer = payload.get("answer")
+                sources = payload.get("sources")
+            else:
+                error = payload.get("error", "RAG call failed")
+
+    return render_template("rag.html", question=question, answer=answer, error=error, sources=sources)
 
 
 if __name__ == "__main__":
