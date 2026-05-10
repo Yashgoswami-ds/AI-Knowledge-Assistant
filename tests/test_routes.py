@@ -13,13 +13,11 @@ def test_about_and_upload_routes_ok():
     assert client.get("/upload-pdf").status_code == 200
 
 
-def test_home_shows_endee_status_badge(monkeypatch):
-    monkeypatch.setattr("app.endee_configured", lambda: True)
+def test_home_shows_basic_ui(monkeypatch):
     client = flask_app.test_client()
     response = client.get("/")
     body = response.get_data(as_text=True)
-    assert "Endee Status:" in body
-    assert "Configured" in body
+    assert "Ask anything" in body or "Search" in body
 
 
 def test_history_and_documents_routes_ok(monkeypatch):

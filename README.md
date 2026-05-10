@@ -8,18 +8,7 @@ Demo Video: Add your hosted demo link here (Google Drive/YouTube)
 
 ## Internship Compliance (Mandatory)
 
-For Endee ML Intern evaluation, keep these steps completed and visible:
-
-- Star the official Endee repository: https://github.com/endee-io/endee
-- Fork the official Endee repository to your GitHub account
-- Build and submit from the forked base repository workflow
-- Submit your final GitHub project link in the application form
-
-Recommended proof for evaluators:
-
-- Keep fork relationship visible on GitHub
-- Mention Endee usage clearly in this README
-- Include setup + run steps that work end-to-end
+Follow your evaluator's instructions for internship submissions and include any required links or evidence in the repository.
 
 ## Problem Statement
 
@@ -82,23 +71,10 @@ This project solves that problem by combining vector-based retrieval with a simp
 4. URL extract request goes to src/link_extractor.py
 5. Result is rendered in templates/index.html
 
-## How Endee is Used (Indexing + Search Flow)
+## Local Search Flow
 
-### Indexing Flow
-- During ingestion, text content from local knowledge and uploaded PDFs is chunked.
-- Chunks are sent to Endee using `store_to_endee()` from `src/endee_api.py`.
-- Endee stores vector-ready records that become available for semantic retrieval.
-
-### Search Flow
-- For local/PDF retrieval paths, the app uses Endee as the required retrieval backend.
-- Query is sent through `search_endee(query, top_k=3)`.
-- Endee returns top matches with similarity scores.
-- Results are normalized and shown in ranked order in the UI.
-
-### Why Endee Here
-- Supports semantic matching over plain keyword matching.
-- Improves relevance for natural-language questions.
-- Fits the project requirement for vector database-based AI workflows.
+- During ingestion, text content from local knowledge and uploaded PDFs is chunked and appended to `data/knowledge.txt`.
+- Local search uses a lightweight token-overlap scoring function to rank relevant entries from the local store.
 
 ## Architecture Diagram
 
@@ -111,11 +87,10 @@ flowchart TD
   F --> P[PDF Handler - src/pdf_handler.py]
   F --> T[Translator - src/translator.py]
 
-  S --> E[Endee Vector DB API - src/endee_api.py]
+  S --> K[data/knowledge.txt]
   S --> W[Wikipedia API]
 
-  P --> K[data/knowledge.txt]
-  P --> E
+  P --> K
 
   F --> H[templates/index.html]
   F --> FB[data/feedback.jsonl]
@@ -126,7 +101,7 @@ If your Markdown preview does not render Mermaid, use the flow above as the arch
 ## Tech Stack
 
 - Backend: Python, Flask
-- Data/API: requests, Endee API (required for local/PDF retrieval)
+- Data/API: requests
 - Parsing: BeautifulSoup4, PyPDF2
 - Translation: googletrans, deep-translator
 - Frontend: HTML + CSS (Jinja templates)
@@ -153,23 +128,7 @@ pip install -r requirements.txt
 ```
 
 ### 3) Environment config
-Create .env in project root. Endee is required for local/PDF retrieval modes.
-
-Local Docker mode (recommended for development):
-
-```env
-ENDEE_BASE_URL=http://localhost:8080/api/v1
-ENDEE_API_KEY=your_api_key_here
-ENDEE_INDEX_NAME=ai_knowledge_assistant
-ALLOW_MODEL_DOWNLOAD=0
-```
-
-Cloud dashboard-visible mode (when your evaluator needs cloud visibility):
-
-```env
-ENDEE_BASE_URL=https://api.endee.ai/v1
-ENDEE_API_KEY=your_api_key_here
-```
+Create a `.env` file in the project root only if you need to override defaults (optional).
 
 ### 4) Run the app
 ```bash
@@ -192,25 +151,22 @@ pytest -q
 4. URL test: https://example.com shows extracted content
 5. PDF upload page works
 6. Search returns ranked results with score
-7. Endee index receives vectors after ingestion/upload
 
 ## Submission Checklist (Evaluation)
 
 - Repository is on GitHub and publicly accessible (or shared as required)
-- README includes problem statement, architecture, Endee integration, setup, and run instructions
+- README includes problem statement, architecture, setup, and run instructions
 - Project demonstrates one practical AI use case (semantic search/RAG/retrieval)
-- Endee is used as the vector database in project flow
 - Final repository link is ready to submit
 
 ## Test Cases (Pass Results)
 
 | # | Test Case | Expected Result | Status |
 |---|-----------|-----------------|--------|
-| 1 | Python compile check (`src/search.py`, `src/pdf_handler.py`, `app.py`, `src/endee_api.py`) | No syntax errors | PASS |
+| 1 | Python compile check (`src/search.py`, `src/pdf_handler.py`, `app.py`) | No syntax errors | PASS |
 | 2 | Home page route test (`/`) | HTTP 200 response | PASS |
 | 3 | About and Upload routes (`/about`, `/upload-pdf`) | HTTP 200 responses | PASS |
 | 4 | URL extraction flow (`https://example.com`) | Extracted page title/content shown | PASS |
-| 5 | Endee-required enforcement for local/PDF retrieval | Clear error if Endee is not configured; Endee path used when configured | PASS |
 
 ### Last Verified On
 
@@ -224,9 +180,8 @@ pytest -q
 - src/link_extractor.py: URL text extraction
 - src/pdf_handler.py: PDF upload and extraction
 - src/translator.py: translation handling
-- src/endee_api.py: Endee API wrapper
 - scripts/fetch_data.py: helper script to fetch seed knowledge
-- scripts/embed_store.py: helper script to generate/store embeddings
+ - scripts/fetch_data.py: helper script to fetch seed knowledge
 - templates/index.html: main UI template
 - templates/history.html: recent activity view
 - templates/documents.html: uploaded PDF list view
@@ -240,7 +195,6 @@ AI-Knowledge-Assistant/
 ├── app.py
 ├── requirements.txt
 ├── src/
-│   ├── endee_api.py
 │   ├── link_extractor.py
 │   ├── pdf_handler.py
 │   ├── search.py
@@ -280,7 +234,7 @@ AI-Knowledge-Assistant/
 - Add full RAG generation layer with grounded response prompts.
 - Add CI workflow for tests and lint checks on pull requests.
 - Add observability dashboard for ingestion/search metrics.
-- Add metadata-filtered retrieval in Endee for stricter source-specific search.
+-- Add metadata-filtered retrieval to local search pipeline for stricter source-specific search.
 
 ## Developer Map
 

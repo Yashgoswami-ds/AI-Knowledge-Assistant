@@ -32,12 +32,10 @@ pip install -r requirements.txt --quiet
 if [ ! -f ".env" ]; then
     echo "[4] Creating .env configuration file..."
     cat > .env << EOF
-ENDEE_BASE_URL=https://api.endee.ai/v1
-ENDEE_API_KEY=your_api_key_here
 FLASK_ENV=development
 FLASK_DEBUG=False
 EOF
-    echo "[!] .env created - UPDATE with your Endee API key"
+    echo "[!] .env created"
 fi
 
 # Create data directories
@@ -52,7 +50,7 @@ echo "Setup Complete!"
 echo "================================"
 echo ""
 echo "Next steps:"
-echo "1. Edit .env file and add your Endee API key"
+echo "1. Edit .env file if needed"
 echo "2. Run: python3 app.py"
 echo "3. Open http://127.0.0.1:5000 in your browser"
 echo ""

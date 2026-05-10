@@ -4,7 +4,6 @@ import os
 import logging
 from pathlib import Path
 from werkzeug.utils import secure_filename
-from src.endee_api import store_to_endee, is_configured as endee_configured
 
 try:
     from PyPDF2 import PdfReader
@@ -77,8 +76,7 @@ def handle_pdf_upload(pdf_file):
     if not PDF_AVAILABLE:
         return False, "PDF support not installed"
 
-    if not endee_configured():
-        return False, "Endee is required. Configure ENDEE_API_KEY in .env"
+    # Save uploaded PDF text to the local knowledge store.
 
     try:
         ensure_upload_folder()
@@ -100,13 +98,8 @@ def handle_pdf_upload(pdf_file):
         if not success:
             return False, "Error saving PDF content to knowledge base"
 
-        stored, store_message = store_to_endee(text_chunks)
-        if not stored:
-            logger.warning("pdf_endee_sync_failed filename=%s reason=%s", filename, store_message)
-            return False, f"PDF text extracted, but Endee upsert failed: {store_message}"
-
         logger.info("pdf_upload_success filename=%s chunks=%s", filename, len(text_chunks))
-        return True, f"PDF '{filename}' processed and synced to Endee"
+        return True, f"PDF '{filename}' processed and saved to local knowledge base"
 
     except Exception as e:
         logger.exception("pdf_upload_exception")

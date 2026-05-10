@@ -6,8 +6,6 @@ import logging
 from urllib.parse import quote
 
 import requests
-
-from src.endee_api import search_endee, is_configured as endee_configured
 from src.translator import translate_result
 
 logger = logging.getLogger(__name__)
@@ -173,25 +171,15 @@ def _search_online_wikipedia(query, top_k=3):
 
 
 def _search_local(query, source_mode="all", top_k=3):
-    """Search local/PDF data strictly via Endee vector search."""
-    if not endee_configured():
-        logger.warning("endee_not_configured source_mode=%s", source_mode)
-        return [], "Endee is required for local/PDF search. Configure ENDEE_API_KEY in .env"
+    """Search local/PDF data using local keyword-overlap scoring.
 
-    endee_results, endee_error = search_endee(query, top_k=top_k)
-    if not endee_results:
-        logger.warning("endee_search_empty query=%s error=%s", query, endee_error)
-        return [], endee_error or "No Endee results found"
-
-    normalized = []
-    for result in endee_results:
-        normalized.append({
-            "text": result.get("text", ""),
-            "score": result.get("score", 0.0),
-            "source": "local",
-        })
-
-    return normalized, None
+    This is a simple fallback that reads data/knowledge.txt and scores
+    entries by token overlap with the query. It supports PDF-only or
+    combined local searches.
+    """
+    entries = _load_local_entries(source_mode)
+    results = _mock_search_entries(query, entries, top_k=top_k)
+    return results, None
 
 
 def explain_result(best_result):

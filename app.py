@@ -11,7 +11,6 @@ from src.search import search
 from src.pdf_handler import handle_pdf_upload, list_uploaded_pdfs
 from src.translator import SUPPORTED_LANGUAGES, is_available as translator_available
 from src.link_extractor import extract_from_url
-from src.endee_api import is_configured as endee_configured
 
 
 load_dotenv()
@@ -82,7 +81,6 @@ def index():
     link_url = ""
     extracted_link = None
     link_error_message = ""
-    endee_status = "Configured" if endee_configured() else "Not Configured"
     language = request.args.get("language", "en")
     source_mode = request.args.get("source", "all")
     
@@ -164,7 +162,6 @@ def index():
         link_url=link_url,
         extracted_link=extracted_link,
         link_error_message=link_error_message,
-        endee_status=endee_status,
     )
 
 

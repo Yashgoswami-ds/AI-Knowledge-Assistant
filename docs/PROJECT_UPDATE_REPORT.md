@@ -9,7 +9,7 @@ AI Knowledge Assistant is a Flask-based application designed to support practica
 
 The system supports:
 - Semantic-style search with top-3 ranked results
-- Endee vector database integration
+-- Local knowledge ingestion and search
 - PDF upload and text extraction
 - URL content extraction
 - Multi-language response translation
@@ -22,11 +22,10 @@ The system supports:
 
 ## 3) Major Changes Completed
 
-### A. Endee Vector Database Integration
-- Added Endee API wrapper in `endee_api.py`
-- Integrated vector search in `search.py`
-- Enforced Endee-required behavior for local/PDF retrieval paths
-- Added PDF-to-Endee sync in `pdf_handler.py`
+### A. Local Ingestion and Search
+- Integrated local knowledge ingestion and lightweight search scoring in `search.py`
+- Added PDF extraction and persistence in `pdf_handler.py`
+- Search now favors local knowledge and falls back to online sources when needed
 
 ### B. Search and Retrieval Enhancements
 - Top-3 result ranking with score display
@@ -63,7 +62,6 @@ The system supports:
 ### Core Backend
 - `app.py`
 - `search.py`
-- `endee_api.py`
 - `pdf_handler.py`
 - `link_extractor.py`
 - `translator.py`
@@ -97,7 +95,6 @@ Validated items include:
 - Python compile checks for key modules
 - Route checks for `/`, `/about`, `/upload-pdf`
 - URL extraction flow test (`https://example.com`)
-- Endee enforcement behavior in search and PDF ingest flow
 
 Status: PASS
 

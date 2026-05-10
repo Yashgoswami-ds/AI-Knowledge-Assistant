@@ -11,7 +11,7 @@ This document explains:
 User (Browser / API Client)
 -> Flask routes in app.py
 -> Feature modules (src/search.py, src/pdf_handler.py, src/link_extractor.py, src/translator.py)
--> Endee integration (src/endee_api.py)
+-> Local knowledge store under data/ (no external vector DB required)
 -> Data files under data/
 -> Templates under templates/
 
@@ -51,7 +51,6 @@ Used by:
 - app.py (search requests)
 
 Uses:
-- src.endee_api.search_endee for local/pdf retrieval
 - src.translator.translate_result for multilingual output
 - Wikipedia API for online mode
 
@@ -66,7 +65,7 @@ Used by:
 
 Uses:
 - PyPDF2 to extract text
-- src.endee_api.store_to_endee to index chunks
+- Appends extracted chunks to `data/knowledge.txt` for local retrieval
 
 Reads/Writes:
 - reads uploaded PDF from data/uploads/
@@ -94,17 +93,14 @@ Backends:
 - googletrans (preferred)
 - deep-translator (fallback)
 
-### src/endee_api.py
+### (No external vector DB)
 
 Used by:
 - search.py (search)
 - pdf_handler.py (store)
 
 Requires env config:
-- ENDEE_BASE_URL
-- ENDEE_API_KEY
-- ENDEE_TIMEOUT_SECONDS (optional)
-- ENDEE_VERIFY_SSL (optional)
+- (No external vector DB required; optional `.env` keys remain for app configuration)
 
 ## 4) Data and support scripts
 
@@ -119,9 +115,9 @@ Requires env config:
 
 - Utility script to fetch Wikipedia summaries and append to knowledge.txt
 
-### scripts/embed_store.py
+### scripts/embed_store.py (removed)
 
-- Utility script to generate embeddings and upsert to Endee SDK index
+- Previously used to generate embeddings and upsert to Endee; removed as part of Endee cleanup.
 
 ## 5) Frontend template map
 
@@ -150,12 +146,11 @@ Requires env config:
 
 - Project overview page
 
-## 6) Testing map
+### 6) Testing map
 
 ### tests/test_routes.py
 
 - Route health checks
-- Endee status badge check
 - History/Documents routes
 - API endpoints response checks
 

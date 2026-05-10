@@ -7,11 +7,10 @@ def test_search_empty_query_returns_error():
     assert "Please enter a search query" in result["error"]
 
 
-def test_search_local_requires_endee(monkeypatch):
-    monkeypatch.setattr("src.search.endee_configured", lambda: False)
+def test_search_local_returns_results_from_local_store(monkeypatch):
+    # Ensure local search fallback returns a list (may be empty) without requiring Endee
     results, error = _search_local("python", source_mode="local", top_k=3)
-    assert results == []
-    assert "Endee is required" in error
+    assert isinstance(results, list)
 
 
 def test_invalid_source_mode_falls_back_to_all(monkeypatch):

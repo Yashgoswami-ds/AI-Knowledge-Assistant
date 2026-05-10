@@ -14,10 +14,10 @@ def test_extract_invalid_url_returns_error():
     assert ok is False
     assert "Invalid URL" in message
 
-
-def test_pdf_upload_requires_endee(monkeypatch):
+def test_pdf_upload_saves_to_knowledge(monkeypatch):
     monkeypatch.setattr("src.pdf_handler.PDF_AVAILABLE", True)
-    monkeypatch.setattr("src.pdf_handler.endee_configured", lambda: False)
+    # Avoid actual PDF parsing in test: stub extraction to return sample chunks
+    monkeypatch.setattr("src.pdf_handler.extract_pdf_text", lambda path: (["sample text chunk"], None))
     success, message = handle_pdf_upload(DummyUpload())
-    assert success is False
-    assert "Endee is required" in message
+    assert success is True
+    assert "processed" in message or "saved" in message

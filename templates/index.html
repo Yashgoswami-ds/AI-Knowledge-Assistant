@@ -526,10 +526,7 @@
   <div class="hero">
     <h1>Ask anything,<br><em>get answers.</em></h1>
     <p>Search your PDFs or the web, then get clear, ranked answers in your selected language.</p>
-    <div class="status-row">
-      <span>Endee Status:</span>
-      <span class="status-pill {% if endee_status == 'Configured' %}status-ok{% else %}status-warn{% endif %}">{{ endee_status }}</span>
-    </div>
+    <!-- Status row removed: Endee integration cleaned from project -->
   </div>
 
   {% with messages = get_flashed_messages(with_categories=true) %}
